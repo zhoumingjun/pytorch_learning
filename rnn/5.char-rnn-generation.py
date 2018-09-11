@@ -70,8 +70,6 @@ class NamesClassifier(torch.nn.Module):
         x = self.linear(x)
         return F.log_softmax(x, dim=1), hidden
 
-    def initHidden(self):
-        return torch.zeros(1, self.hidden_size)
 
 
 dataloader = DataLoader(namesDataset, batch_size=1, shuffle=True, num_workers=4, drop_last=True)
