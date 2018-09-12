@@ -1,11 +1,9 @@
 from torch.utils.data import Dataset, DataLoader
-from os import path
-import unicodedata
 import torch
-import string
+
 
 import torch.nn.functional as F
-import re
+
 
 import numpy as np
 
@@ -17,8 +15,8 @@ class NamesDataset(Dataset):
         all_letters = set([])
         with open(data_path) as f:
             while True:
-                seq = f.read(10)
-                if not seq or len(seq) != 10:
+                seq = f.read(100)
+                if not seq or len(seq) != 100:
                     print("End of file")
                     break
 
@@ -73,13 +71,12 @@ class NamesDataset(Dataset):
         return tensor
 
 
-dataset = NamesDataset("./data/cun.txt")
+dataset = NamesDataset("./data/hetangyuese.txt")
 print("fiction length:", len(dataset) * 1000)
 print("letters stat:", dataset.getNLetters(), dataset.getAllLetters())
-# print("name2class", dataset.name2Class("iam"))
-# print("name2tensor", dataset.name2tensor("Iam"))
 
-dataloader = DataLoader(dataset, batch_size=100, shuffle=True, num_workers=4, drop_last=False)
+
+dataloader = DataLoader(dataset, batch_size=20, shuffle=True, num_workers=4, drop_last=False)
 
 
 class FictionGenerator(torch.nn.Module):
@@ -145,7 +142,9 @@ def sample(start=1, limit=1000):
         return fiction
 
 
+
 for epoch in range(1000):
+
 
     for i_batch, batch in enumerate(dataloader):
         optimizer.zero_grad()
@@ -162,5 +161,9 @@ for epoch in range(1000):
         loss.backward()
         optimizer.step()
 
-    print("epoch {} i_batch {} loss {}".format(epoch, i_batch, loss))
-    sample()
+
+
+
+    if epoch % 50 == 0:
+        print("epoch {} i_batch {} loss {}".format(epoch, i_batch, loss))
+        sample()
